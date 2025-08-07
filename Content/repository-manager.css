@@ -5,30 +5,81 @@
 }
 
 .sidebar {
+    width: 60px;
     min-height: 100vh;
     background: linear-gradient(135deg, #1b3a4b 0%, #435A91 35%, #3c6a84 100%);
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.25);
+    overflow-x: hidden;
+    transition: width 0.4s ease;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1000;
 }
 
-
-    .sidebar .nav-link {
-        color: rgba(255,255,255,0.8);
-        padding: 15px 20px;
-        border-radius: 8px;
-        margin: 5px 10px;
-        transition: all 0.3s ease;
+    .sidebar:hover {
+        width: 200px;
     }
 
-        .sidebar .nav-link:hover {
-            background-color: rgba(255,255,255,0.1);
-            color: white;
-            transform: translateX(5px);
-        }
+    /* Always show icons */
+    .sidebar .nav-icon {
+        display: inline-block;
+        width: 20px;
+        min-width: 20px;
+        text-align: center;
+        font-size: 1rem;
+        color: rgba(255,255,255,0.9);
+    }
 
-        .sidebar .nav-link.active {
-            background-color: rgba(255,255,255,0.2);
-            color: white;
-        }
+    /* Hide sub-item by default */
+    .sidebar .sub-item {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease;
+        white-space: nowrap;
+    }
+
+    /* Show sub-item when hovered */
+    .sidebar:hover .sub-item {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* Optional: reduce nav-link padding so only icons fit when collapsed */
+    .sidebar .nav-link {
+        color: rgba(255,255,255,0.8);
+        padding: 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+
+
+.fixed-brand {
+    position: sticky;
+    top: 0;
+    background-color: #1e1e2f;
+    padding: 1rem;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    z-index: 10;
+}
+
+/* Always show icon */
+.nav-icon {
+    display: inline-block;
+    width: 20px;
+    min-width: 20px;
+    text-align: center;
+    margin-right: 8px;
+    color: rgba(255,255,255,0.9);
+    font-size: 1rem;
+}
 
 .main-content {
     padding: 30px;
@@ -163,7 +214,18 @@
     padding: 20px;
     border-bottom: 1px solid rgba(255,255,255,0.1);
     margin-bottom: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
 }
+
+/* Show title only when sidebar is expanded */
+.sidebar:hover .brand-title {
+    opacity: 1;
+    visibility: visible;
+}
+
 
 /* File Management Styles */
 .file-item {
@@ -498,4 +560,9 @@ body.font-large h1 {
 
 body.font-large h5 {
     font-size: 1.4rem;
+}
+
+.no-scroll {
+    overflow: hidden !important;
+    resize: none; /* Optional: disables resizing handle */
 }

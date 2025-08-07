@@ -59,10 +59,9 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="ddlRole2" class="form-label">Keterangan </label>
-                        <asp:DropDownList ID="ddlRoles6" runat="server" CssClass="form-select">
-                            <asp:ListItem Text="Penyelaras" Value="penyelaras" />
-                            <asp:ListItem Text="Pembantu" Value="pembantu" />
-                        </asp:DropDownList>
+                        <asp:TextBox ID="ddlRoles2" runat="server" CssClass="form-control auto-resize"
+                            TextMode="MultiLine"
+                            Rows="1"></asp:TextBox>
                     </div>
                 </div>
 
