@@ -66,6 +66,16 @@
                 </div>
             </div>
 
+            <div class="row mb-3">
+    <div class="col-md-6">
+        <label for="ddlRole2" class="form-label">Keterangan </label>
+        <asp:DropDownList ID="DropDownList2" runat="server" CssClass="form-select">
+            <asp:ListItem Text="Penyelaras" Value="penyelaras" />
+            <asp:ListItem Text="Pembantu" Value="pembantu" />
+        </asp:DropDownList>
+    </div>
+</div>
+
         </div>
         </div>
 </body>
