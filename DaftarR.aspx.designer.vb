@@ -14,13 +14,13 @@ Option Explicit On
 Partial Public Class DaftarR
 
     '''<summary>
-    '''ddlRole1 control.
+    '''txtKodMQA control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents ddlRole1 As Global.System.Web.UI.WebControls.DropDownList
+    Protected WithEvents txtKodMQA As Global.System.Web.UI.WebControls.TextBox
 
     '''<summary>
     '''ddlRole2 control.

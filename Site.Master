@@ -26,19 +26,19 @@
                                 <span class="sub-item">Dashboard</span>
                             </a>
                             <a class="nav-link" data-bs-toggle="collapse" href="#repositorySubMenu" role="button" aria-expanded="false" aria-controls="repositorySubMenu">
-    <span class="sub-item">Repository</span>
-</a>
-<div class="collapse ms-3" id="repositorySubMenu">
-    <a href="DaftarR.aspx" class="nav-link">
-        <span class="sub-item">Daftar Repositori</span>
-    </a>
-    <a href="Assign.aspx" class="nav-link">
-        <span class="sub-item">Assign Penyelaras Program</span>
-    </a>
-    <a href="RepositoryHandle.aspx" class="nav-link">
-        <span class="sub-item">Dokumen Repositori</span>
-    </a>
-</div>
+                                <span class="sub-item">Repository</span>
+                            </a>
+                            <div class="collapse ms-3" id="repositorySubMenu">
+                                <a href="DaftarR.aspx" class="nav-link" id="DaftarRepo">
+                                    <span class="sub-item">Daftar Repositori</span>
+                                </a>
+                                <a href="Assign.aspx" class="nav-link">
+                                    <span class="sub-item">Assign Penyelaras Program</span>
+                                </a>
+                                <a href="RepositoryHandle.aspx" class="nav-link">
+                                    <span class="sub-item">Dokumen Repositori</span>
+                                </a>
+                            </div>
 
                             <a href="Settings.aspx" class="nav-link" id="settings-link">
                                 <span class="sub-item">Settings</span>
@@ -59,14 +59,32 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const currentPage = window.location.pathname.toLowerCase();
-            
+
             if (currentPage.includes("dashboard")) {
-                document.getElementById("dashboard-link")?.classList.add("active");0
-            } else if (currentPage.includes("repository")) {
-                document.getElementById("repository-link")?.classList.add("active");
+                document.getElementById("dashboard-link")?.classList.add("active"); 0
             } else if (currentPage.includes("settings")) {
                 document.getElementById("settings-link")?.classList.add("active");
             }
+            const isRepositoryPage = ["daftarr", "assign", "repositoryhandle"].some(page =>
+                currentPage.includes(page)
+            );
+
+            if (isRepositoryPage) {
+                const submenu = document.getElementById("repositorySubMenu");
+                if (submenu) submenu.classList.add("show"); // ⬅️ This opens the collapse
+            }
+
+            // Highlight specific links
+            document.querySelectorAll(".nav-link").forEach(link => {
+                const text = link.textContent.trim().toLowerCase();
+                if (currentPage.includes("daftarr") && text === "daftar repositori") {
+                    link.classList.add("active");
+                } else if (currentPage.includes("assign") && text === "assign penyelaras program") {
+                    link.classList.add("active");
+                } else if (currentPage.includes("repositoryhandle") && text === "dokumen repositori") {
+                    link.classList.add("active");
+                }
+            });
         });
     </script>
 
