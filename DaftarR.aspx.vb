@@ -71,20 +71,21 @@ Public Class DaftarR
     Private Sub LoadKursus(kodFakulti As String)
         Dim connStr As String = ConfigurationManager.ConnectionStrings("AkreditasiDB").ConnectionString
         Using conn As New SqlConnection(connStr)
-            Dim query As String = "SELECT Kod_Kursus, Nama_Kursus FROM acKursus WHERE Kod_Fakulti = @KodFakulti ORDER BY Nama_Kursus"
+            Dim query As String = "SELECT KursusID, Nama_Kursus FROM acKursus WHERE Kod_Fakulti = @KodFakulti ORDER BY Nama_Kursus"
             Using cmd As New SqlCommand(query, conn)
                 cmd.Parameters.AddWithValue("@KodFakulti", kodFakulti)
                 conn.Open()
                 Dim reader As SqlDataReader = cmd.ExecuteReader()
                 ddlRole3.DataSource = reader
-                ddlRole3.DataTextField = "Nama_Kursus"
-                ddlRole3.DataValueField = "Kod_Kursus"
+                ddlRole3.DataTextField = "Nama_Kursus"   ' display name
+                ddlRole3.DataValueField = "KursusID"     ' store the PK for insertion
                 ddlRole3.DataBind()
                 reader.Close()
             End Using
         End Using
         ddlRole3.Items.Insert(0, New ListItem("-- Pilih Kursus --", ""))
     End Sub
+
 
     ' Save - inserts Kod_Kursus (foreign key) into ac04_DaftarRepositori
     Protected Sub save_Click(sender As Object, e As EventArgs) Handles save.Click
@@ -105,11 +106,7 @@ Public Class DaftarR
         Using conn As New SqlConnection(connStr)
             Dim query As String =
                 "INSERT INTO ac04_DaftarRepositori
-<<<<<<< HEAD
                  (ac04_KodMQA, KursusID, ac04_TarikhMula, ac04_TarikhTamat, ac04_Keterangan)
-=======
-                 (ac04_KodMQA, ac04_KursusID, ac04_TarikhMula, ac04_TarikhTamat, ac04_Keterangan)
->>>>>>> 61ac3c91e06d7b91206f6cd4031b21090f50ecaf
                  VALUES (@KodMQA, @KursusID, @TarikhMula, @TarikhTamat, @Keterangan)"
 
             Using cmd As New SqlCommand(query, conn)

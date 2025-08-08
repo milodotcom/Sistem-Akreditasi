@@ -24,9 +24,11 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="ddlRole2" class="form-label">Fakulti </label>
-                        <asp:DropDownList ID="ddlRole2" runat="server" CssClass="form-select">
-                            <asp:ListItem Text="Penyelaras" Value="penyelaras" />
-                            <asp:ListItem Text="Pembantu" Value="pembantu" />
+                        <asp:DropDownList
+                            ID="ddlRole2"
+                            runat="server"
+                            AutoPostBack="True"
+                            OnSelectedIndexChanged="ddlRole2_SelectedIndexChanged">
                         </asp:DropDownList>
                     </div>
                 </div>
@@ -34,9 +36,9 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="ddlRole2" class="form-label">Kursus </label>
-                        <asp:DropDownList ID="ddlRole3" runat="server" CssClass="form-select">
-                            <asp:ListItem Text="Penyelaras" Value="penyelaras" />
-                            <asp:ListItem Text="Pembantu" Value="pembantu" />
+                        <asp:DropDownList
+                            ID="ddlRole3"
+                            runat="server">
                         </asp:DropDownList>
                     </div>
                 </div>
@@ -64,6 +66,9 @@
                             Rows="1"></asp:TextBox>
                     </div>
                 </div>
+
+                <asp:Button ID="save" runat="server" Text="Save" OnClick="save_Click" />
+
 
             </div>
         </div>
