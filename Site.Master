@@ -17,7 +17,7 @@
                 <!-- Sidebar -->
                 <div class="col-md-3 col-lg-2 px-0">
                     <div class="sidebar">
-                        <div class="brand-title fixed-brand">
+                        <div class="brand-title ">
                             <i class="fas fa-code-branch me-2"></i>
                             Akreditasi
                         </div>

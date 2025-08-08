@@ -5,6 +5,12 @@ Public Class DaftarR
     Inherits System.Web.UI.Page
 
     Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
+
+        If Session("idStaf") Is Nothing Then
+            Response.Redirect("Login.aspx") ' kick back to login if not logged in
+            Return
+        End If
+
         If Not IsPostBack Then
             LoadFakulti()
             ' Start with an empty Kursus dropdown
@@ -91,6 +97,15 @@ Public Class DaftarR
     Protected Sub save_Click(sender As Object, e As EventArgs) Handles save.Click
         Dim connStr As String = ConfigurationManager.ConnectionStrings("AkreditasiDB").ConnectionString
 
+        If Session("idStaf") Is Nothing Then
+            Response.Redirect("Login.aspx?sessionExpired=1")
+            Exit Sub
+        End If
+
+        Dim staffId As String = Convert.ToString(Session("idStaf"))
+
+
+
         ' Parse dates safely
         Dim dtStart As Object = DBNull.Value
         Dim dtEnd As Object = DBNull.Value
@@ -106,8 +121,8 @@ Public Class DaftarR
         Using conn As New SqlConnection(connStr)
             Dim query As String =
                 "INSERT INTO ac04_DaftarRepositori
-                 (ac04_KodMQA, KursusID, ac04_TarikhMula, ac04_TarikhTamat, ac04_Keterangan)
-                 VALUES (@KodMQA, @KursusID, @TarikhMula, @TarikhTamat, @Keterangan)"
+                 (ac04_KodMQA, KursusID, ac04_TarikhMula, ac04_TarikhTamat, ac04_Keterangan, ac01_idStaf)
+                 VALUES (@KodMQA, @KursusID, @TarikhMula, @TarikhTamat, @Keterangan, @idStaf)"
 
             Using cmd As New SqlCommand(query, conn)
                 cmd.Parameters.AddWithValue("@KodMQA", txtKodMQA.Text)
@@ -116,6 +131,7 @@ Public Class DaftarR
                 cmd.Parameters.AddWithValue("@TarikhTamat", If(dtEnd Is DBNull.Value, DBNull.Value, dtEnd))
                 ' Keterangan from your dropdown control (you used ddlRoles6 in earlier markup)
                 cmd.Parameters.AddWithValue("@Keterangan", If(String.IsNullOrEmpty(ddlRoles6.Text), DBNull.Value, ddlRoles6.Text))
+                cmd.Parameters.AddWithValue("@idStaf", staffId)
 
 
                 If String.IsNullOrEmpty(ddlRole3.SelectedValue) Then
