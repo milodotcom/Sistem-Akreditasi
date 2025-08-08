@@ -23,24 +23,30 @@
                         </div>
                         <nav class="nav flex-column">
                             <a href="Dashboard.aspx" class="nav-link" id="dashboard-link">
+                                <i class="fas fa-tachometer-alt me-2"></i>
                                 <span class="sub-item">Dashboard</span>
                             </a>
                             <a class="nav-link" data-bs-toggle="collapse" href="#repositorySubMenu" role="button" aria-expanded="false" aria-controls="repositorySubMenu">
+                                <i class="fas fa-folder me-2"></i>
                                 <span class="sub-item">Repository</span>
                             </a>
                             <div class="collapse ms-3" id="repositorySubMenu">
                                 <a href="DaftarR.aspx" class="nav-link" id="DaftarRepo">
+                                    <i class="fas fa-plus-circle me-2"></i>
                                     <span class="sub-item">Daftar Repositori</span>
                                 </a>
                                 <a href="Assign.aspx" class="nav-link">
+                                    <i class="fas fa-user-tag me-2"></i>
                                     <span class="sub-item">Assign Penyelaras Program</span>
                                 </a>
                                 <a href="RepositoryHandle.aspx" class="nav-link">
+                                    <i class="fas fa-file-alt me-2"></i>
                                     <span class="sub-item">Dokumen Repositori</span>
                                 </a>
                             </div>
 
                             <a href="Settings.aspx" class="nav-link" id="settings-link">
+                                <i class="fas fa-cog me-2"></i>
                                 <span class="sub-item">Settings</span>
                             </a>
                         </nav>

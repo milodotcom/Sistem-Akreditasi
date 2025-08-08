@@ -499,3 +499,9 @@ body.font-large h1 {
 body.font-large h5 {
     font-size: 1.4rem;
 }
+
+
+.no-scroll {
+    overflow: hidden !important;
+    resize: none; /* Optional: disables resizing handle */
+}
