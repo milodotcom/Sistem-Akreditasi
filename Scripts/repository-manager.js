@@ -530,3 +530,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
     setupDragAndDrop();
 });
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const textareas = document.querySelectorAll('.auto-resize');
+
+    textareas.forEach(function (textarea) {
+        textarea.style.overflow = 'hidden';
+        textarea.style.height = 'auto';
+        textarea.addEventListener('input', function () {
+            this.style.height = 'auto'; // Reset height
+            this.style.height = (this.scrollHeight) + 'px'; // Set to scrollHeight
+        });
+
+        // Trigger resize on load
+        textarea.dispatchEvent(new Event('input'));
+    });
+});
+

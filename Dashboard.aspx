@@ -12,7 +12,8 @@
                 </h1>
                 <p class="text-muted mb-4">balsamic vinegar</p>
                 <div class="text-center">
-                    <button class="btn btn-repo" onclick="showRepositories(); return false;"
+                    <button class="btn btn-repo"
+                        onclick="window.location.href='RepositoryHandle.aspx'; return false;"
                         style="width: 200px; height: 200px; border-radius: 15px; font-size: 1.1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px;">
                         <i class="fas fa-code-branch" style="font-size: 3rem;"></i>
                         <span>Repositories</span>
@@ -122,9 +123,9 @@
                     </div>
                 </div>
             </div>
-            
-                        
-                        <!-- File Management Interface -->
+
+
+            <!-- File Management Interface -->
             <div id="file-management" style="display: none;">
                 <!-- Breadcrumb Navigation -->
                 <div class="card mb-3">
