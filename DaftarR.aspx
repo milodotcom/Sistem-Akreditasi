@@ -27,6 +27,7 @@
                         <asp:DropDownList
                             ID="ddlRole2"
                             runat="server"
+                            CssClass="form-select"
                             AutoPostBack="True"
                             OnSelectedIndexChanged="ddlRole2_SelectedIndexChanged">
                         </asp:DropDownList>
@@ -36,9 +37,8 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="ddlRole2" class="form-label">Kursus </label>
-                        <asp:DropDownList
-                            ID="ddlRole3"
-                            runat="server">
+                        <asp:DropDownList ID="ddlRole3" runat="server" CssClass="form-select">
+                         
                         </asp:DropDownList>
                     </div>
                 </div>
