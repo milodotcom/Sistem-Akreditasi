@@ -38,7 +38,6 @@
                     <div class="col-md-6">
                         <label for="ddlRole2" class="form-label">Kursus </label>
                         <asp:DropDownList ID="ddlRole3" runat="server" CssClass="form-select">
-                         
                         </asp:DropDownList>
                     </div>
                 </div>
@@ -69,7 +68,23 @@
 
                 <asp:Button ID="save" runat="server" Text="Save" OnClick="save_Click" />
 
+                <div class="table-responsive">
+                    <asp:GridView ID="gvRepositori" runat="server"
+                        AutoGenerateColumns="False"
+                        CssClass="table table-bordered table-striped mt-4"
+                        DataKeyNames="ac04_id">
+                        <Columns>
+                            <asp:BoundField DataField="ac04_KodMQA" HeaderText="Kod MQA" />
+                            <asp:BoundField DataField="Nama_Kursus" HeaderText="Kursus" />
+                            <asp:BoundField DataField="ac04_TarikhMula" HeaderText="Tarikh Mula" DataFormatString="{0:dd/MM/yyyy}" />
+                            <asp:BoundField DataField="ac04_TarikhTamat" HeaderText="Tarikh Tamat" DataFormatString="{0:dd/MM/yyyy}" />
+                            <asp:BoundField DataField="ac04_Keterangan" HeaderText="Keterangan" />
 
+
+                            <asp:CommandField ShowDeleteButton="True" HeaderText="Action" />
+                        </Columns>
+                    </asp:GridView>
+                </div>
             </div>
         </div>
     </body>

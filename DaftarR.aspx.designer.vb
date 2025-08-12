@@ -75,4 +75,13 @@ Partial Public Class DaftarR
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents save As Global.System.Web.UI.WebControls.Button
+
+    '''<summary>
+    '''gvRepositori control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents gvRepositori As Global.System.Web.UI.WebControls.GridView
 End Class

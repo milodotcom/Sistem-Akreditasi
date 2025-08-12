@@ -16,6 +16,7 @@ Public Class DaftarR
             ' Start with an empty Kursus dropdown
             ddlRole3.Items.Clear()
             ddlRole3.Items.Insert(0, New ListItem("-- Pilih Kursus --", ""))
+            LoadRepositori()
         End If
     End Sub
 
@@ -63,7 +64,7 @@ Public Class DaftarR
         ddlRole2.Items.Insert(0, New ListItem("-- Pilih Fakulti --", ""))
     End Sub
 
-    ' Fired when the user picks a fakulti — make sure ddlRole2 has AutoPostBack="True" in .aspx
+    ' Fired when the user picks a fakulti 
     Protected Sub ddlRole2_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ddlRole2.SelectedIndexChanged
         If String.IsNullOrEmpty(ddlRole2.SelectedValue) Then
             ddlRole3.Items.Clear()
@@ -146,6 +147,40 @@ Public Class DaftarR
             End Using
         End Using
 
+        LoadRepositori()
         Response.Write("<script>alert('Data berjaya disimpan!');</script>")
     End Sub
+
+    Private Sub LoadRepositori()
+        Dim connStr As String = ConfigurationManager.ConnectionStrings("AkreditasiDB").ConnectionString
+        Using conn As New SqlConnection(connStr)
+            Dim sql As String = "
+            SELECT dr.ac04_id, dr.ac04_KodMQA, k.Nama_Kursus, dr.ac04_TarikhMula, dr.ac04_TarikhTamat, dr.ac04_Keterangan
+            FROM ac04_DaftarRepositori dr
+            INNER JOIN acKursus k ON dr.KursusID = k.KursusID
+        "
+            Using cmd As New SqlCommand(sql, conn)
+                conn.Open()
+                Dim rdr As SqlDataReader = cmd.ExecuteReader()
+                gvRepositori.DataSource = rdr
+                gvRepositori.DataBind()
+            End Using
+        End Using
+    End Sub
+
+    Protected Sub gvRepositori_RowDeleting(sender As Object, e As GridViewDeleteEventArgs) Handles gvRepositori.RowDeleting
+        Dim id As Integer = Convert.ToInt32(gvRepositori.DataKeys(e.RowIndex).Value)
+        Dim connStr As String = ConfigurationManager.ConnectionStrings("AkreditasiDB").ConnectionString
+        Using conn As New SqlConnection(connStr)
+            Dim sql As String = "DELETE FROM ac04_DaftarRepositori WHERE ac04_id = @id"
+            Using cmd As New SqlCommand(sql, conn)
+                cmd.Parameters.AddWithValue("@id", id)
+                conn.Open()
+                cmd.ExecuteNonQuery()
+            End Using
+        End Using
+        LoadRepositori()
+    End Sub
+
+
 End Class

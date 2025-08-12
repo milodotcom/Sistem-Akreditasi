@@ -21,8 +21,7 @@
                     <div class="col-md-6">
                         <label for="ddlRole1" class="form-label">Kod MQA </label>
                         <asp:DropDownList ID="ddlRole1" runat="server" CssClass="form-select">
-                            <asp:ListItem Text="Penyelaras" Value="penyelaras" />
-                            <asp:ListItem Text="Pembantu" Value="pembantu" />
+                            
                         </asp:DropDownList>
                     </div>
                 </div>
@@ -31,11 +30,12 @@
                     <div class="col-md-6">
                         <label for="ddlRole2" class="form-label">Nama Penyelaras </label>
                         <asp:DropDownList ID="ddlRole2" runat="server" CssClass="form-select">
-                            <asp:ListItem Text="Penyelaras" Value="penyelaras" />
-                            <asp:ListItem Text="Pembantu" Value="pembantu" />
+                           
                         </asp:DropDownList>
                     </div>
                 </div>
+
+                <asp:Button ID="save" runat="server" Text="Save" OnClick="save_Click" />
             </div>
     </div>
 
