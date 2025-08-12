@@ -7,13 +7,13 @@ Public Class DaftarR
     Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
 
         If Session("idStaf") Is Nothing Then
-            Response.Redirect("Login.aspx") ' kick back to login if not logged in
+            Response.Redirect("Login.aspx") 'kick back to login if not logged in //session
             Return
         End If
 
         If Not IsPostBack Then
             LoadFakulti()
-            ' Start with an empty Kursus dropdown
+            ' Start empty Kursus dropdown
             ddlRole3.Items.Clear()
             ddlRole3.Items.Insert(0, New ListItem("-- Pilih Kursus --", ""))
             LoadRepositori()
