@@ -35,20 +35,19 @@ Partial Class Assign
         ddlRole1.Items.Insert(0, New ListItem("-- Pilih Kod MQA --", ""))
     End Sub
 
-
-
-
     Private Sub LoadPenyelaras()
         Dim connStr As String = ConfigurationManager.ConnectionStrings("AkreditasiDB").ConnectionString
         Using conn As New SqlConnection(connStr)
-            Dim sql As String = "SELECT ac01_idStaf, ac01_nama 
-                                     FROM ac01_Pengguna"
+            Dim sql As String = "SELECT ac01_idStaf, ac01_nama, 
+                             ac01_idStaf + ' - ' + ac01_nama AS DisplayText
+                     FROM ac01_Pengguna
+                     WHERE ac01_Tahap = 3"
             Using cmd As New SqlCommand(sql, conn)
                 conn.Open()
                 Using rdr As SqlDataReader = cmd.ExecuteReader()
                     ddlRole2.DataSource = rdr
-                    ddlRole2.DataTextField = "ac01_nama"  ' what user sees
-                    ddlRole2.DataValueField = "ac01_idStaf"
+                    ddlRole2.DataTextField = "DisplayText"   ' shows "idStaf - nama"
+                    ddlRole2.DataValueField = "ac01_idStaf"  ' value still idStaf
                     ddlRole2.DataBind()
                 End Using
             End Using
