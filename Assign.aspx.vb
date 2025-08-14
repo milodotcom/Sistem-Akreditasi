@@ -8,7 +8,9 @@ Partial Class Assign
         If Not IsPostBack Then
             LoadKodMQA()
             LoadPenyelaras()
+            LoadAssignments()
         End If
+        LoadAssignments()
     End Sub
 
     Private Sub LoadKodMQA()
@@ -64,21 +66,40 @@ Partial Class Assign
 
         Dim connStr As String = ConfigurationManager.ConnectionStrings("AkreditasiDB").ConnectionString
         Dim sql As String = "
-        INSERT INTO ac02_Assign (ac01_idStaf, ac02_KodKursus)
-        VALUES (@IdStaf, @KodKursus)
+        INSERT INTO ac02_Assign (ac01_idStaf, ac04_KodMQA)
+        VALUES (@IdStaf, @KodMQA)
     "
 
         Using conn As New SqlConnection(connStr)
             Using cmd As New SqlCommand(sql, conn)
                 cmd.Parameters.AddWithValue("@IdStaf", ddlRole2.SelectedValue)
-                cmd.Parameters.AddWithValue("@KodKursus", ddlRole1.SelectedValue)
+                cmd.Parameters.AddWithValue("@KodMQA", ddlRole1.SelectedValue)
 
                 conn.Open()
                 cmd.ExecuteNonQuery()
             End Using
         End Using
-
+        LoadAssignments()
         Response.Write("<script>alert('Assignment saved successfully!');</script>")
     End Sub
+
+    Private Sub LoadAssignments()
+        Dim connStr As String = ConfigurationManager.ConnectionStrings("AkreditasiDB").ConnectionString
+        Using conn As New SqlConnection(connStr)
+            Dim sql As String = "
+            SELECT a.ac01_idStaf, p.ac01_nama, a.ac02_KodKursus, a.ac04_KodMQA
+            FROM ac02_Assign a
+            INNER JOIN ac01_Pengguna p ON a.ac01_idStaf = p.ac01_idStaf
+        "
+            Using cmd As New SqlCommand(sql, conn)
+                conn.Open()
+                Using rdr As SqlDataReader = cmd.ExecuteReader()
+                    gvAssignments.DataSource = rdr
+                    gvAssignments.DataBind()
+                End Using
+            End Using
+        End Using
+    End Sub
+
 
 End Class

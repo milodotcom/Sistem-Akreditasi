@@ -36,18 +36,32 @@
                 </div>
 
                 <asp:Button ID="save" runat="server" Text="Save" OnClick="save_Click" />
+
+                <hr class="my-4" />
+
+                <!-- List view / table -->
+                <h4>Senarai Assignments</h4>
+                <asp:GridView ID="gvAssignments" runat="server" AutoGenerateColumns="False" CssClass="table table-bordered table-striped mt-3">
+                    <Columns>
+                        <asp:BoundField DataField="ac04_KodMQA" HeaderText="Kod MQA" />
+                        <asp:BoundField DataField="ac02_KodKursus" HeaderText="Kod Kursus" />
+                        <asp:BoundField DataField="ac01_idStaf" HeaderText="ID Staf" />
+                        <asp:BoundField DataField="ac01_nama" HeaderText="Nama Penyelaras" />
+                    </Columns>
+                </asp:GridView>
             </div>
         </div>
+
 
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
             $(document).ready(function () {
                 $('#<%= ddlRole1.ClientID %>').select2({
-                        placeholder: "-- Pilih Kod MQA --",
-                        allowClear: true,
-                        width: '100%'
-                    });
+                    placeholder: "-- Pilih Kod MQA --",
+                    allowClear: true,
+                    width: '100%'
+                });
                 $('#<%= ddlRole2.ClientID %>').select2({
                     placeholder: "-- Pilih Penyelaras --",
                     allowClear: true,

@@ -39,4 +39,13 @@ Partial Public Class Assign
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents save As Global.System.Web.UI.WebControls.Button
+
+    '''<summary>
+    '''gvAssignments control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents gvAssignments As Global.System.Web.UI.WebControls.GridView
 End Class
