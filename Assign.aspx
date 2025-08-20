@@ -41,14 +41,20 @@
 
                 <!-- List view / table -->
                 <h4>Senarai Assignments</h4>
-                <asp:GridView ID="gvAssignments" runat="server" AutoGenerateColumns="False" CssClass="table table-bordered table-striped mt-3">
+                <asp:GridView ID="gvAssignments" runat="server" AutoGenerateColumns="False"
+                    DataKeyNames="KursusID,ac04_KodMQA"
+                    OnRowDeleting="gvAssign_RowDeleting" CssClass="table table-bordered">
+
                     <Columns>
-                        <asp:BoundField DataField="ac04_KodMQA" HeaderText="Kod MQA" />
-                        <asp:BoundField DataField="ac02_KodKursus" HeaderText="Kod Kursus" />
                         <asp:BoundField DataField="ac01_idStaf" HeaderText="ID Staf" />
-                        <asp:BoundField DataField="ac01_nama" HeaderText="Nama Penyelaras" />
+                        <asp:BoundField DataField="ac01_nama" HeaderText="Nama" />
+                        <asp:BoundField DataField="Kod_Kursus" HeaderText="Kod Kursus" />
+                        <asp:BoundField DataField="ac04_KodMQA" HeaderText="Kod MQA" />
+
+                        <asp:CommandField HeaderText="Action" ShowDeleteButton="True" />
                     </Columns>
                 </asp:GridView>
+
             </div>
         </div>
 

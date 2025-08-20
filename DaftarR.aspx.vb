@@ -20,49 +20,25 @@ Public Class DaftarR
         End If
     End Sub
 
-    ' Try to load Fakulti from a Fakulti table if it exists,
-    ' otherwise populate distinct Kod_Fakulti from acKursus (fallback).
+
     Private Sub LoadFakulti()
         Dim connStr As String = ConfigurationManager.ConnectionStrings("AkreditasiDB").ConnectionString
-
         Using conn As New SqlConnection(connStr)
-            Dim query As String = "SELECT Kod_Fakulti, Nama_Fakulti FROM Fakulti ORDER BY Nama_Fakulti"
-            Dim usedFallback As Boolean = False
-
-            Try
-                Using cmd As New SqlCommand(query, conn)
-                    conn.Open()
-                    Dim reader As SqlDataReader = cmd.ExecuteReader()
-                    ddlRole2.DataSource = reader
-                    ddlRole2.DataTextField = "Nama_Fakulti"
-                    ddlRole2.DataValueField = "Kod_Fakulti"
-                    ddlRole2.DataBind()
-                    reader.Close()
-                End Using
-            Catch ex As SqlException
-                ' Fakulti table probably doesn't exist — fallback to distinct Kod_Fakulti from acKursus
-                usedFallback = True
-            Finally
-                If conn.State <> ConnectionState.Closed Then conn.Close()
-            End Try
-
-            If usedFallback Then
-                Dim q2 As String = "SELECT DISTINCT Kod_Fakulti FROM acKursus ORDER BY Kod_Fakulti"
-                Using cmd2 As New SqlCommand(q2, conn)
-                    conn.Open()
-                    Dim reader2 As SqlDataReader = cmd2.ExecuteReader()
-                    ddlRole2.DataSource = reader2
-                    ddlRole2.DataTextField = "Kod_Fakulti"   ' no separate name available, show the code
-                    ddlRole2.DataValueField = "Kod_Fakulti"
-                    ddlRole2.DataBind()
-                    reader2.Close()
-                End Using
-                If conn.State <> ConnectionState.Closed Then conn.Close()
-            End If
+            Dim q2 As String = "SELECT DISTINCT Kod_Fakulti FROM acKursus ORDER BY Kod_Fakulti"
+            Using cmd2 As New SqlCommand(q2, conn)
+                conn.Open()
+                Dim reader2 As SqlDataReader = cmd2.ExecuteReader()
+                ddlRole2.DataSource = reader2
+                ddlRole2.DataTextField = "Kod_Fakulti"
+                ddlRole2.DataValueField = "Kod_Fakulti"
+                ddlRole2.DataBind()
+                reader2.Close()
+            End Using
         End Using
 
         ddlRole2.Items.Insert(0, New ListItem("-- Pilih Fakulti --", ""))
     End Sub
+
 
     ' Fired when the user picks a fakulti 
     Protected Sub ddlRole2_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ddlRole2.SelectedIndexChanged
@@ -128,8 +104,9 @@ Public Class DaftarR
             Using cmd As New SqlCommand(query, conn)
                 cmd.Parameters.AddWithValue("@KodMQA", txtKodMQA.Text)
                 cmd.Parameters.AddWithValue("@KursusID", If(String.IsNullOrEmpty(ddlRole3.SelectedValue), DBNull.Value, ddlRole3.SelectedValue))
-                cmd.Parameters.AddWithValue("@TarikhMula", If(dtStart Is DBNull.Value, DBNull.Value, dtStart))
-                cmd.Parameters.AddWithValue("@TarikhTamat", If(dtEnd Is DBNull.Value, DBNull.Value, dtEnd))
+                cmd.Parameters.AddWithValue("@TarikhMula", If(TypeOf dtStart Is DateTime, dtStart, CType(DBNull.Value, Object)))
+                cmd.Parameters.AddWithValue("@TarikhTamat", If(TypeOf dtEnd Is DateTime, dtEnd, CType(DBNull.Value, Object)))
+
                 ' Keterangan from your dropdown control (you used ddlRoles6 in earlier markup)
                 cmd.Parameters.AddWithValue("@Keterangan", If(String.IsNullOrEmpty(ddlRoles6.Text), DBNull.Value, ddlRoles6.Text))
                 cmd.Parameters.AddWithValue("@idStaf", staffId)
@@ -148,14 +125,15 @@ Public Class DaftarR
         End Using
 
         LoadRepositori()
-        Response.Write("<script>alert('Data berjaya disimpan!');</script>")
+        ClientScript.RegisterStartupScript(Me.GetType(), "alert", "alert('Data berjaya disimpan!');", True)
+
     End Sub
 
     Private Sub LoadRepositori()
         Dim connStr As String = ConfigurationManager.ConnectionStrings("AkreditasiDB").ConnectionString
         Using conn As New SqlConnection(connStr)
             Dim sql As String = "
-            SELECT dr.ac04_id, dr.ac04_KodMQA, k.Nama_Kursus, dr.ac04_TarikhMula, dr.ac04_TarikhTamat, dr.ac04_Keterangan
+            SELECT dr.ac04_KodMQA, k.Kod_Kursus, dr.ac04_TarikhMula, dr.ac04_TarikhTamat, dr.ac04_Keterangan
             FROM ac04_DaftarRepositori dr
             INNER JOIN acKursus k ON dr.KursusID = k.KursusID
         "
@@ -169,12 +147,12 @@ Public Class DaftarR
     End Sub
 
     Protected Sub gvRepositori_RowDeleting(sender As Object, e As GridViewDeleteEventArgs) Handles gvRepositori.RowDeleting
-        Dim id As Integer = Convert.ToInt32(gvRepositori.DataKeys(e.RowIndex).Value)
+        Dim kodMQA As String = gvRepositori.DataKeys(e.RowIndex).Value.ToString()
         Dim connStr As String = ConfigurationManager.ConnectionStrings("AkreditasiDB").ConnectionString
         Using conn As New SqlConnection(connStr)
-            Dim sql As String = "DELETE FROM ac04_DaftarRepositori WHERE ac04_id = @id"
+            Dim sql As String = "DELETE FROM ac04_DaftarRepositori WHERE ac04_KodMQA = @id"
             Using cmd As New SqlCommand(sql, conn)
-                cmd.Parameters.AddWithValue("@id", id)
+                cmd.Parameters.AddWithValue("@id", kodMQA)
                 conn.Open()
                 cmd.ExecuteNonQuery()
             End Using

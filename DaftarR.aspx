@@ -72,10 +72,10 @@
                     <asp:GridView ID="gvRepositori" runat="server"
                         AutoGenerateColumns="False"
                         CssClass="table table-bordered table-striped mt-4"
-                        DataKeyNames="ac04_id">
+                        DataKeyNames="ac04_KodMQA">
                         <Columns>
                             <asp:BoundField DataField="ac04_KodMQA" HeaderText="Kod MQA" />
-                            <asp:BoundField DataField="Nama_Kursus" HeaderText="Kursus" />
+                            <asp:BoundField DataField="Kod_Kursus" HeaderText="Kursus" />
                             <asp:BoundField DataField="ac04_TarikhMula" HeaderText="Tarikh Mula" DataFormatString="{0:dd/MM/yyyy}" />
                             <asp:BoundField DataField="ac04_TarikhTamat" HeaderText="Tarikh Tamat" DataFormatString="{0:dd/MM/yyyy}" />
                             <asp:BoundField DataField="ac04_Keterangan" HeaderText="Keterangan" />
