@@ -142,11 +142,14 @@
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\repository-manager.css" />
     <Content Include="Content\Site.css" />
+    <Content Include="CourseList.aspx" />
     <Content Include="DaftarR.aspx" />
     <Content Include="Dashboard.aspx" />
+    <Content Include="Faculty.aspx" />
     <Content Include="index.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="Kategori.aspx" />
     <Content Include="Login.aspx" />
     <Content Include="RepositoryHandle.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
@@ -206,6 +209,7 @@
     <Content Include="Scripts\WebForms\WebParts.js" />
     <Content Include="Scripts\WebForms\WebUIValidation.js" />
     <Content Include="Settings.aspx" />
+    <Content Include="test.aspx" />
     <Content Include="Web.config" />
     <Content Include="Bundle.config" />
   </ItemGroup>
@@ -233,6 +237,13 @@
       <DependentUpon>Contact.aspx</DependentUpon>
       <SubType>ASPXCodebehind</SubType>
     </Compile>
+    <Compile Include="CourseList.aspx.designer.vb">
+      <DependentUpon>CourseList.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="CourseList.aspx.vb">
+      <DependentUpon>CourseList.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
     <Compile Include="DaftarR.aspx.designer.vb">
       <DependentUpon>DaftarR.aspx</DependentUpon>
     </Compile>
@@ -247,6 +258,13 @@
       <DependentUpon>Dashboard.aspx</DependentUpon>
       <SubType>ASPXCodebehind</SubType>
     </Compile>
+    <Compile Include="Faculty.aspx.designer.vb">
+      <DependentUpon>Faculty.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Faculty.aspx.vb">
+      <DependentUpon>Faculty.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
     <Compile Include="index.aspx.vb">
       <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>index.aspx</DependentUpon>
@@ -256,6 +274,13 @@
     </Compile>
     <Compile Include="Global.asax.vb">
       <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Kategori.aspx.designer.vb">
+      <DependentUpon>Kategori.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Kategori.aspx.vb">
+      <DependentUpon>Kategori.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
     </Compile>
     <Compile Include="Login.aspx.designer.vb">
       <DependentUpon>Login.aspx</DependentUpon>
@@ -303,6 +328,13 @@
     <Compile Include="Site.Master.vb">
       <DependentUpon>Site.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="test.aspx.designer.vb">
+      <DependentUpon>test.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="test.aspx.vb">
+      <DependentUpon>test.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
     </Compile>
     <Compile Include="ViewSwitcher.ascx.vb">
       <DependentUpon>ViewSwitcher.ascx</DependentUpon>
@@ -352,7 +384,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Code\" />
-    <Folder Include="App_Data\UserRepositories\" />
+    <Folder Include="App_Data\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

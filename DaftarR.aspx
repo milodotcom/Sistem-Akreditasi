@@ -24,13 +24,7 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="ddlRole2" class="form-label">Fakulti </label>
-                        <asp:DropDownList
-                            ID="ddlRole2"
-                            runat="server"
-                            CssClass="form-select"
-                            AutoPostBack="True"
-                            OnSelectedIndexChanged="ddlRole2_SelectedIndexChanged">
-                        </asp:DropDownList>
+                        <asp:DropDownList ID="ddlRole2" runat="server" CssClass="form-select" AutoPostBack="True" OnSelectedIndexChanged="ddlRole2_SelectedIndexChanged"></asp:DropDownList>
                     </div>
                 </div>
 

@@ -9,10 +9,6 @@
             margin-bottom: 1rem;
         }
 
-        .right-content {
-            display: flex;
-            gap: 10px;
-        }
 
         .Repo-bg {
             background: linear-gradient(-45deg, #B6E9FA, #B8E2F2, #BEDEEB, #D6F0FF, #DAECED);
@@ -66,10 +62,6 @@
                 transform: translateY(-3px);
             }
 
-        .item-icon {
-            display: block;
-        }
-
         .item-label {
             display: block;
             margin-top: .5rem;
@@ -107,14 +99,6 @@
             <h1><i class="fas fa-database me-3 text-primary"></i>Repository</h1>
             <p class="text-muted mb-0">Organize and manage your files and folders</p>
         </div>
-        <div class="right-content">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CreateFolder">
-                <i class="fas fa-folder me-1"></i>New Folder
-            </button>
-            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#UploadModal">
-                <i class="fas fa-upload me-1"></i>Upload File
-            </button>
-        </div>
     </div>
 
     <div class="Repo-bg">
@@ -147,46 +131,6 @@
 
         <div id="fileContainer">
             <asp:Literal ID="litFolders" runat="server" />
-        </div>
-    </div>
-
-    <!-- Create Folder Modal -->
-    <div class="modal fade" id="CreateFolder" tabindex="-1" aria-labelledby="CreateFolderLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="CreateFolderLabel">Create New Folder</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <asp:TextBox ID="txtFolderName" runat="server" CssClass="form-control" placeholder="Enter folder name" />
-                    <asp:Label ID="lblCreateFolderMessage" runat="server" CssClass="text-success mt-2" />
-                </div>
-                <div class="modal-footer">
-                    <asp:Button ID="btnCreateFolder" runat="server" Text="Create" CssClass="btn btn-primary" OnClick="btnCreateFolder_Click" />
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Upload Modal -->
-    <div class="modal fade" id="UploadModal" tabindex="-1" aria-labelledby="UploadModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="UploadModalLabel">Upload Documents</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <asp:FileUpload ID="FileUpload1" runat="server" CssClass="form-control mb-2" />
-                    <asp:Label ID="lblMessage" runat="server" CssClass="text-success" />
-                </div>
-                <div class="modal-footer">
-                    <asp:Button ID="btnUpload" runat="server" Text="Upload" CssClass="btn btn-primary" OnClick="btnUpload_Click" />
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
         </div>
     </div>
 

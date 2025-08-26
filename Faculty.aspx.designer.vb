@@ -11,14 +11,14 @@ Option Strict On
 Option Explicit On
 
 
-Partial Public Class RepositoryHandle
+Partial Public Class Faculty
 
     '''<summary>
-    '''litFolders control.
+    '''FacultyRepeater control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents litFolders As Global.System.Web.UI.WebControls.Literal
+    Protected WithEvents FacultyRepeater As Global.System.Web.UI.WebControls.Repeater
 End Class

@@ -1,142 +1,271 @@
-﻿Imports System.IO
+﻿Imports System.Data
+Imports System.Data.SqlClient
 Imports System.Text
 Imports System.Web
+Imports System.Configuration
 
 Partial Class RepositoryHandle
     Inherits System.Web.UI.Page
 
-    Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
-        Dim root = Server.MapPath("~/App_Data/UserRepositories/")
-        Dim virtualPath = Request.QueryString("path")
-        Dim viewMode = Request.QueryString("view")
-        Dim physPath = If(String.IsNullOrEmpty(virtualPath), root, Path.Combine(root, virtualPath))
-        If Not Directory.Exists(physPath) Then physPath = root
+    Private ReadOnly Property ConnStr As String
+        Get
+            Return ConfigurationManager.ConnectionStrings("AkreditasiDB").ConnectionString
+        End Get
+    End Property
 
-        ' Handle delete/rename
+    Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
+        Dim pathParam = Request.QueryString("path") ' "catId" or "catId/subId"
+        Dim viewMode = Request.QueryString("view")
+
         Dim action = Request.QueryString("action")
-        Dim itemType = Request.QueryString("type")   ' "folder" or "file"
-        Dim itemName = Request.QueryString("item")
+        Dim itemType = Request.QueryString("type")   ' "folder" | "sub"
+        Dim item = Request.QueryString("item")
         Dim newName = Request.QueryString("newName")
 
-        If Not String.IsNullOrEmpty(action) AndAlso Not String.IsNullOrEmpty(itemName) Then
-            If action = "delete" Then
-                If itemType = "folder" Then
-                    Dim dp = Path.Combine(physPath, itemName)
-                    If Directory.Exists(dp) Then Directory.Delete(dp, True)
-                Else
-                    Dim fp = Path.Combine(physPath, itemName)
-                    If File.Exists(fp) Then File.Delete(fp)
+        If Not String.IsNullOrEmpty(action) AndAlso Not String.IsNullOrEmpty(item) Then
+            Try
+                If action = "delete" Then
+                    Select Case itemType
+                        Case "folder"
+                            DeleteCategoryById(item)
+                        Case "sub"
+                            DeleteSubcategoryById(item)
+                    End Select
+                ElseIf action = "rename" AndAlso Not String.IsNullOrEmpty(newName) Then
+                    Select Case itemType
+                        Case "folder"
+                            RenameCategoryById(item, newName)
+                        Case "sub"
+                            RenameSubcategoryById(item, newName)
+                    End Select
                 End If
-            ElseIf action = "rename" AndAlso Not String.IsNullOrEmpty(newName) Then
-                newName = Path.GetFileName(newName)
-                If itemType = "folder" Then
-                    Dim oldP = Path.Combine(physPath, itemName)
-                    Dim newP = Path.Combine(physPath, newName)
-                    If Directory.Exists(oldP) AndAlso Not Directory.Exists(newP) Then Directory.Move(oldP, newP)
-                Else
-                    Dim oldF = Path.Combine(physPath, itemName)
-                    Dim newF = Path.Combine(physPath, newName)
-                    If File.Exists(oldF) AndAlso Not File.Exists(newF) Then File.Move(oldF, newF)
-                End If
-            End If
+            Catch ex As Exception
+                ' Optional: log ex.Message
+            End Try
 
-            ' Redirect back (preserve view and path)
-            Dim qs = "?path=" & HttpUtility.UrlEncode(virtualPath) & "&view=" & viewMode
+            Dim qs = "?path=" & HttpUtility.UrlEncode(pathParam) & "&view=" & HttpUtility.UrlEncode(viewMode)
             Response.Redirect("RepositoryHandle.aspx" & qs)
             Return
         End If
 
         If Not IsPostBack Then
-            LoadFoldersAndFiles(physPath, virtualPath, viewMode)
+            LoadFoldersAndFiles(pathParam, viewMode)
         End If
     End Sub
 
-    Private Sub LoadFoldersAndFiles(folderPhysicalPath As String, virtualPath As String, viewMode As String)
+    ' ------------------------
+    ' Delete / Rename helpers (DB-only: tbl_kategori + tbl_subkategori)
+    ' ------------------------
+    Private Sub DeleteCategoryById(idStr As String)
+        Dim id As Integer
+        If Integer.TryParse(idStr, id) Then
+            Using conn As New SqlConnection(ConnStr)
+                conn.Open()
+                Using tran = conn.BeginTransaction()
+                    ' delete subcategories under category
+                    Using cmd2 As New SqlCommand("DELETE FROM tbl_subkategori WHERE id_kat = @id", conn, tran)
+                        cmd2.Parameters.AddWithValue("@id", id)
+                        cmd2.ExecuteNonQuery()
+                    End Using
+                    ' delete category
+                    Using cmd3 As New SqlCommand("DELETE FROM tbl_kategori WHERE id_kat = @id", conn, tran)
+                        cmd3.Parameters.AddWithValue("@id", id)
+                        cmd3.ExecuteNonQuery()
+                    End Using
+                    tran.Commit()
+                End Using
+            End Using
+        End If
+    End Sub
+
+    Private Sub DeleteSubcategoryById(idStr As String)
+        Dim id As Integer
+        If Integer.TryParse(idStr, id) Then
+            Using conn As New SqlConnection(ConnStr)
+                conn.Open()
+                Using cmd As New SqlCommand("DELETE FROM tbl_subkategori WHERE id_sub = @id_sub", conn)
+                    cmd.Parameters.AddWithValue("@id_sub", id)
+                    cmd.ExecuteNonQuery()
+                End Using
+            End Using
+        End If
+    End Sub
+
+    Private Sub RenameCategoryById(idStr As String, newName As String)
+        Dim id As Integer
+        newName = newName.Trim()
+        If newName = "" Then Return
+        If Integer.TryParse(idStr, id) Then
+            Using conn As New SqlConnection(ConnStr)
+                conn.Open()
+                Using cmd As New SqlCommand("UPDATE tbl_kategori SET NamaKategori = @newName WHERE id_kat = @id", conn)
+                    cmd.Parameters.AddWithValue("@newName", newName)
+                    cmd.Parameters.AddWithValue("@id", id)
+                    cmd.ExecuteNonQuery()
+                End Using
+            End Using
+        End If
+    End Sub
+
+    Private Sub RenameSubcategoryById(idStr As String, newName As String)
+        Dim id As Integer
+        newName = newName.Trim()
+        If newName = "" Then Return
+        If Integer.TryParse(idStr, id) Then
+            Using conn As New SqlConnection(ConnStr)
+                conn.Open()
+                Using cmd As New SqlCommand("UPDATE tbl_subkategori SET NamaSub = @newName WHERE id_sub = @id_sub", conn)
+                    cmd.Parameters.AddWithValue("@newName", newName)
+                    cmd.Parameters.AddWithValue("@id_sub", id)
+                    cmd.ExecuteNonQuery()
+                End Using
+            End Using
+        End If
+    End Sub
+
+    ' ------------------------
+    ' Load listing from DB (categories and subcategories only)
+    ' ------------------------
+    Private Sub LoadFoldersAndFiles(pathParam As String, viewMode As String)
         Dim sb As New StringBuilder()
         Dim isList = (viewMode = "list")
 
+        ' parse pathParam as "catId" or "catId/subId"
+        Dim currentCatId As Integer = 0
+        Dim currentSubId As Integer = 0
+        If Not String.IsNullOrEmpty(pathParam) Then
+            Dim parts = pathParam.Split("/"c)
+            Integer.TryParse(parts(0), currentCatId)
+            If parts.Length > 1 Then Integer.TryParse(parts(1), currentSubId)
+        End If
+
         If isList Then
-            ' --- LIST VIEW: Bootstrap table ---
             sb.AppendLine("<table class='table table-striped'>")
-            sb.AppendLine("  <thead><tr>")
-            sb.AppendLine("    <th>Name</th><th>Type</th><th>Size</th><th>Date Modified</th><th>Actions</th>")
-            sb.AppendLine("  </tr></thead>")
-            sb.AppendLine("  <tbody>")
+            sb.AppendLine("<thead><tr><th>Name</th><th>Type</th><th>Details</th><th>Actions</th></tr></thead>")
+            sb.AppendLine("<tbody>")
 
-            ' Folders
-            For Each folderPath As String In Directory.GetDirectories(folderPhysicalPath)
-                Dim nm = Path.GetFileName(folderPath)
-                Dim newV = If(String.IsNullOrEmpty(virtualPath), nm, virtualPath & "/" & nm)
-                Dim modTime = Directory.GetLastWriteTime(folderPath).ToString("dd MMM yyyy HH:mm")
+            Dim catCount = 0
+            Dim subCount = 0
 
-                sb.AppendLine("    <tr>")
-                sb.AppendLine("      <td><a href='?path=" & HttpUtility.UrlEncode(newV) & "&view=list'>" _
-                              & HttpUtility.HtmlEncode(nm) & "</a></td>")
-                sb.AppendLine("      <td>Folder</td>")
-                sb.AppendLine("      <td>—</td>")
-                sb.AppendLine("      <td>" & modTime & "</td>")
-                sb.AppendLine("      <td>")
-                sb.AppendLine($"        <button class='btn btn-sm btn-outline-primary me-1' onclick=""doRename('folder','{HttpUtility.UrlEncode(virtualPath)}','{HttpUtility.HtmlEncode(nm)}')"">Rename</button>")
-                sb.AppendLine($"        <button class='btn btn-sm btn-outline-danger' onclick=""doDelete('folder','{HttpUtility.UrlEncode(virtualPath)}','{HttpUtility.HtmlEncode(nm)}')"">Delete</button>")
-                sb.AppendLine("      </td>")
+            If currentCatId = 0 Then
+                ' root -> list categories (tbl_kategori)
+                Using conn As New SqlConnection(ConnStr)
+                    conn.Open()
+                    Using cmd As New SqlCommand("SELECT id_kat, NamaKategori FROM tbl_kategori ORDER BY NamaKategori", conn)
+                        Using rdr = cmd.ExecuteReader()
+                            While rdr.Read()
+                                catCount += 1
+                                Dim id_kat = Convert.ToInt32(rdr("id_kat"))
+                                Dim name = Convert.ToString(rdr("NamaKategori"))
+                                Dim encPath = HttpUtility.UrlEncode(id_kat.ToString())
 
-                sb.AppendLine("    </tr>")
-            Next
+                                sb.AppendLine("<tr>")
+                                sb.AppendLine($"  <td><a href='?path={encPath}&view=list'>{HttpUtility.HtmlEncode(name)}</a></td>")
+                                sb.AppendLine("  <td>Folder</td>")
+                                sb.AppendLine("  <td>—</td>")
+                                sb.AppendLine("  <td>")
+                                sb.AppendLine($"    <button class='btn btn-sm btn-outline-primary me-1' onclick=""doRename('folder','{encPath}','{id_kat}')"">Rename</button>")
+                                sb.AppendLine($"    <button class='btn btn-sm btn-outline-danger' onclick=""doDelete('folder','{encPath}','{id_kat}')"">Delete</button>")
+                                sb.AppendLine("  </td>")
+                                sb.AppendLine("</tr>")
+                            End While
+                        End Using
+                    End Using
+                End Using
+            Else
+                ' inside a category -> show subcategories
+                Using conn As New SqlConnection(ConnStr)
+                    conn.Open()
+                    Using cmd As New SqlCommand("SELECT id_sub, NamaSub FROM tbl_subkategori WHERE id_kat = @id_kat ORDER BY NamaSub", conn)
+                        cmd.Parameters.AddWithValue("@id_kat", currentCatId)
+                        Using rdr = cmd.ExecuteReader()
+                            While rdr.Read()
+                                subCount += 1
+                                Dim id_sub = Convert.ToInt32(rdr("id_sub"))
+                                Dim name = Convert.ToString(rdr("NamaSub"))
+                                Dim encPath = HttpUtility.UrlEncode(currentCatId.ToString() & "/" & id_sub.ToString())
 
-            ' Files
-            For Each filePath As String In Directory.GetFiles(folderPhysicalPath)
-                Dim fn = Path.GetFileName(filePath)
-                Dim fi = New FileInfo(filePath)
-                Dim sizeKb = (fi.Length / 1024).ToString("N1") & " KB"
-                Dim modTime = fi.LastWriteTime.ToString("dd MMM yyyy HH:mm")
+                                sb.AppendLine("<tr>")
+                                sb.AppendLine($"  <td><a href='?path={encPath}&view=list'>{HttpUtility.HtmlEncode(name)}</a></td>")
+                                sb.AppendLine("  <td>Subfolder</td>")
+                                sb.AppendLine("  <td>—</td>")
+                                sb.AppendLine("  <td>")
+                                sb.AppendLine($"    <button class='btn btn-sm btn-outline-primary me-1' onclick=""doRename('sub','{encPath}','{id_sub}')"">Rename</button>")
+                                sb.AppendLine($"    <button class='btn btn-sm btn-outline-danger' onclick=""doDelete('sub','{encPath}','{id_sub}')"">Delete</button>")
+                                sb.AppendLine("  </td>")
+                                sb.AppendLine("</tr>")
+                            End While
+                        End Using
+                    End Using
+                End Using
 
-                sb.AppendLine("    <tr>")
-                sb.AppendLine("      <td>" & HttpUtility.HtmlEncode(fn) & "</td>")
-                sb.AppendLine("      <td>" & HttpUtility.HtmlEncode(fi.Extension.TrimStart(".")) & "</td>")
-                sb.AppendLine("      <td>" & sizeKb & "</td>")
-                sb.AppendLine("      <td>" & modTime & "</td>")
-                sb.AppendLine("      <td>")
-                sb.AppendLine($"        <button class='btn btn-sm btn-outline-primary me-1' onclick=""doRename('folder','{HttpUtility.UrlEncode(virtualPath)}','{HttpUtility.HtmlEncode(fn)}')"">Rename</button>")
-                sb.AppendLine($"        <button class='btn btn-sm btn-outline-danger' onclick=""doDelete('folder','{HttpUtility.UrlEncode(virtualPath)}','{HttpUtility.HtmlEncode(fn)}')"">Delete</button>")
-                sb.AppendLine("      </td>")
+                ' If a subId is present, show a message (no files stored in DB)
+                If currentSubId > 0 Then
+                    sb.AppendLine("<tr><td colspan='4' class='text-muted'>Subkategori dipilih. Tiada dokumen disimpan dalam sistem ini.</td></tr>")
+                End If
+            End If
 
-                sb.AppendLine("    </tr>")
-            Next
+            If catCount = 0 AndAlso subCount = 0 Then
+                sb.AppendLine("<tr><td colspan='4' class='text-muted'>Folder ini kosong.</td></tr>")
+            End If
 
-            sb.AppendLine("  </tbody>")
-            sb.AppendLine("</table>")
+            sb.AppendLine("</tbody></table>")
 
         Else
-            ' --- TILE VIEW: big icons + name only ---
+            ' Tile view (categories or subcategories)
             sb.AppendLine("<div class='view-tiles'>")
-            For Each folderPath As String In Directory.GetDirectories(folderPhysicalPath)
-                Dim nm = Path.GetFileName(folderPath)
-                Dim newV = If(String.IsNullOrEmpty(virtualPath), nm, virtualPath & "/" & nm)
-                sb.AppendLine("  <div class='item-card'>")
-                sb.AppendLine("    <a href='?path=" & HttpUtility.UrlEncode(newV) & "&view=tiles'>")
-                sb.AppendLine("      <i class='fas fa-folder fa-3x text-warning'></i>")
-                sb.AppendLine("    </a>")
-                sb.AppendLine("    <span>" & HttpUtility.HtmlEncode(nm) & "</span>")
-                sb.AppendLine("  </div>")
-            Next
-            For Each filePath As String In Directory.GetFiles(folderPhysicalPath)
-                Dim fn = Path.GetFileName(filePath)
-                sb.AppendLine("  <div class='item-card'>")
-                sb.AppendLine("    <i class='fas fa-file fa-3x text-secondary'></i>")
-                sb.AppendLine("    <span>" & HttpUtility.HtmlEncode(fn) & "</span>")
-                sb.AppendLine("  </div>")
-            Next
+            Dim anyItem As Boolean = False
+
+            If currentCatId = 0 Then
+                Using conn As New SqlConnection(ConnStr)
+                    conn.Open()
+                    Using cmd As New SqlCommand("SELECT id_kat, NamaKategori FROM tbl_kategori ORDER BY NamaKategori", conn)
+                        Using rdr = cmd.ExecuteReader()
+                            While rdr.Read()
+                                anyItem = True
+                                Dim id_kat = Convert.ToInt32(rdr("id_kat"))
+                                Dim name = Convert.ToString(rdr("NamaKategori"))
+                                Dim encPath = HttpUtility.UrlEncode(id_kat.ToString())
+                                sb.AppendLine("<div class='item-card'>")
+                                sb.AppendLine($"  <a href='?path={encPath}&view=tiles'>")
+                                sb.AppendLine("    <i class='fas fa-folder fa-3x text-warning'></i>")
+                                sb.AppendLine("  </a>")
+                                sb.AppendLine($"  <span>{HttpUtility.HtmlEncode(name)}</span>")
+                                sb.AppendLine("</div>")
+                            End While
+                        End Using
+                    End Using
+                End Using
+            Else
+                Using conn As New SqlConnection(ConnStr)
+                    conn.Open()
+                    Using cmd As New SqlCommand("SELECT id_sub, NamaSub FROM tbl_subkategori WHERE id_kat = @id_kat ORDER BY NamaSub", conn)
+                        cmd.Parameters.AddWithValue("@id_kat", currentCatId)
+                        Using rdr = cmd.ExecuteReader()
+                            While rdr.Read()
+                                anyItem = True
+                                Dim id_sub = Convert.ToInt32(rdr("id_sub"))
+                                Dim name = Convert.ToString(rdr("NamaSub"))
+                                Dim encPath = HttpUtility.UrlEncode(currentCatId.ToString() & "/" & id_sub.ToString())
+                                sb.AppendLine("<div class='item-card'>")
+                                sb.AppendLine($"  <a href='?path={encPath}&view=tiles'>")
+                                sb.AppendLine("    <i class='fas fa-folder fa-3x text-warning'></i>")
+                                sb.AppendLine("  </a>")
+                                sb.AppendLine($"  <span>{HttpUtility.HtmlEncode(name)}</span>")
+                                sb.AppendLine("</div>")
+                            End While
+                        End Using
+                    End Using
+                End Using
+            End If
+
+            If Not anyItem Then
+                sb.AppendLine("<div class='text-muted'>Folder ini kosong.</div>")
+            End If
+
             sb.AppendLine("</div>")
         End If
 
         litFolders.Text = sb.ToString()
-    End Sub
-
-    Protected Sub btnCreateFolder_Click(sender As Object, e As EventArgs) Handles btnCreateFolder.Click
-        ' (unchanged)
-    End Sub
-
-    Protected Sub btnUpload_Click(sender As Object, e As EventArgs) Handles btnUpload.Click
-        ' (unchanged)
     End Sub
 End Class
